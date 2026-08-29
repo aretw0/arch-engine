@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  cad/sh3d/Home.xml — a casa demo no Sweet Home 3D, como TEXTO.
+
+  Derivado de core/templates/base_humanizer/Home.xml. O `.sh3d` (zip) é gerado por
+  `arch-engine pack-sh3d examples/eco-house-demo` em cad/render/modelo.sh3d e referencia o
+  OBJ que o OpenSCAD produziu (`model="modelo/modelo.obj"`, entrada relativa dentro do zip).
+
+  Para editar na GUI: abra o .sh3d, mexa, salve, e traga o Home.xml de volta:
+    unzip -p cad/render/modelo.sh3d Home.xml > cad/sh3d/Home.xml   (reponha os placeholders)
+-->
+<home version="7300" name="${projeto_nome}" camera="topCamera" wallHeight="${edificacao_pe_direito}">
+  <property name="com.eteks.sweethome3d.SweetHome3D.origem" value="arch-engine"/>
+
+  <environment groundColor="A8B99A" skyColor="CCE4FC" lightColor="D8D8D8" ceillingLightColor="D0D0D0"
+               wallsAlpha="0" photoWidth="1600" photoHeight="1200" photoAspectRatio="RATIO_4_3" photoQuality="2"/>
+
+  <compass x="${compass_x}" y="${compass_y}" diameter="100" northDirection="${lote_orientacao_norte_rad}"/>
+
+  <!-- Vista aérea (topCamera) e observador em frente à fachada. -->
+  <camera attribute="topCamera" lens="PINHOLE" x="${camera_top_x}" y="${camera_top_y}" z="${camera_top_z}"
+          yaw="${camera_top_yaw}" pitch="0.65" fieldOfView="1.1" time="1782475200000"/>
+  <observerCamera attribute="observerCamera" lens="PINHOLE" x="${camera_obs_x}" y="${camera_obs_y}" z="170"
+                  yaw="${camera_obs_yaw}" pitch="0.05" fieldOfView="1.1" time="1782475200000"/>
+
+  <!-- A edificação exportada pelo OpenSCAD (OFF → OBJ). Dimensões = bbox da malha. -->
+  <pieceOfFurniture name="${projeto_nome} (OpenSCAD)" model="${modelo_obj}"
+                    x="${edificacao_x}" y="${edificacao_y}" elevation="0"
+                    width="${modelo_largura}" depth="${modelo_profundidade}" height="${modelo_altura}"
+                    movable="false" resizable="false" deformable="false"/>
+
+  <!-- Sol de tarde: luz pontual alta, a noroeste da edificação. -->
+  <light name="Sol (tarde)" model="luz/luz.obj" power="0.9"
+         x="${luz_x}" y="${luz_y}" elevation="${luz_z}" width="1" depth="1" height="1"
+         movable="false" visible="false">
+    <lightSource x="0.5" y="0.5" z="0.5" color="FFF4DC" diameter="0.5"/>
+  </light>
+
+  <!-- Cômodo = projeção da edificação; dá área e piso à planta humanizada. -->
+  <room name="${projeto_nome}" areaVisible="true" floorColor="D9C7A7" ceilingVisible="false">
+    <point x="${edificacao_x0}" y="${edificacao_y0}"/>
+    <point x="${edificacao_x1}" y="${edificacao_y0}"/>
+    <point x="${edificacao_x1}" y="${edificacao_y1}"/>
+    <point x="${edificacao_x0}" y="${edificacao_y1}"/>
+  </room>
+</home>

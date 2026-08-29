@@ -5,6 +5,7 @@
 #   build     data/*.yaml → artifacts/ (relatório, quantitativos, quality-report, manifest) + cad/gen/params.scad
 #   cad       OpenSCAD → cad/render/modelo.{off,stl,png}; OFF → OBJ (Sweet Home 3D)
 #   sh3d      cad/sh3d/Home.xml + modelo.obj → cad/render/modelo.sh3d
+#   sh3d-check lê o .sh3d com o parser do Sweet Home 3D (Java + jars) — ver scripts/verify_sh3d.java
 #   photo     foto headless do .sh3d via ConsolePhotoGenerator (Java) — ver função
 #   manifest  reescreve artifacts/manifest.json enxergando os artefatos do CAD
 #   all       build → cad → sh3d → manifest
@@ -57,6 +58,16 @@ run_sh3d() {
     "$UV" run arch-engine pack-sh3d "$INSTANCIA"
 }
 
+# Etapa 3b (opcional) — abre o .sh3d com o parser do próprio SH3D, sem GUI.
+run_sh3d_check() {
+    need java "instale um JRE 11+ (ex.: sdkman)"
+    [[ -n "${SH3D_JAR_DIR:-}" ]] || die "defina SH3D_JAR_DIR (pasta com sweethome3d.jar; apt install sweethome3d libjava3d-java)"
+    local cp
+    cp="$(find "$SH3D_JAR_DIR" /usr/share/java -maxdepth 1 -name '*.jar' 2>/dev/null | tr '\n' ':')"
+    log "sh3d-check: parser do Sweet Home 3D"
+    java -Djava.awt.headless=true -cp "$cp" scripts/verify_sh3d.java "$RENDER/modelo.sh3d"
+}
+
 # Etapa 4 (opcional) — foto fotorrealista headless do .sh3d.
 #
 # O Sweet Home 3D NÃO tem um flag oficial `-headless`: a GUI aceita `-open arquivo.sh3d`,
@@ -94,6 +105,7 @@ case "$ETAPA" in
     build)    run_build ;;
     cad)      run_cad ;;
     sh3d)     run_sh3d ;;
+    sh3d-check) run_sh3d_check ;;
     photo)    run_photo ;;
     manifest) run_manifest ;;
     all)      run_build; run_cad; run_sh3d; run_manifest ;;
