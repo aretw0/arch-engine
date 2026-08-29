@@ -1,0 +1,15 @@
+{
+  "name": "arch-engine-refarm-proof",
+  "private": true,
+  "type": "module",
+  "description": "Prova de consumo dos contratos @refarm.dev por um produtor Python. O core do arch-engine não depende de Node.",
+  "scripts": {
+    "vendor:refarm": "node scripts/vendor_refarm.mjs",
+    "test:refarm": "node scripts/test_refarm_contracts.mjs"
+  },
+  "dependencies": {
+    "@refarm.dev/artifact-contract-v1": "file:vendor/refarm.dev-artifact-contract-v1-0.1.0.tgz",
+    "@refarm.dev/quality-contract-v1": "file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz"
+  },
+  "engines": { "node": ">=22" }
+}
