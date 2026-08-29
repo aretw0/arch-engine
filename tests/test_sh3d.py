@@ -4,7 +4,14 @@ from xml.etree import ElementTree
 import pytest
 
 from arch_engine.loader import SpecError
-from arch_engine.sh3d import empacotar, parametros_sh3d, renderizar_home_xml
+from arch_engine.mesh import Caixa
+from arch_engine.sh3d import (
+    EXTRAS_PADRAO,
+    TEMPLATES_DIR,
+    empacotar,
+    parametros_sh3d,
+    renderizar_home_xml,
+)
 
 TEMPLATE = """<?xml version="1.0"?>
 <home version="7300" name="${projeto_nome}" wallHeight="${edificacao_pe_direito}">
@@ -51,3 +58,28 @@ def test_empacota_home_xml_e_obj_no_zip(tmp_path, projeto, lote):
     with zipfile.ZipFile(saida) as z:
         assert sorted(z.namelist()) == ["Home.xml", "casa/casa.obj"]
         assert z.read("Home.xml").decode("utf-8") == xml
+
+
+def test_bbox_da_malha_dita_as_dimensoes_da_peca(projeto, lote):
+    p = parametros_sh3d(projeto, lote, "x.obj", Caixa(largura=900, altura=464, profundidade=1200))
+    assert p["modelo_altura"] == 464  # pé-direito + cumeeira, não o YAML
+    assert p["camera_top_z"] == 464 * 3
+    sem_caixa = parametros_sh3d(projeto, lote, "x.obj")
+    assert sem_caixa["modelo_altura"] == 300
+
+
+def test_template_do_core_renderiza_com_os_parametros_do_core(projeto, lote):
+    template = (TEMPLATES_DIR / "Home.xml").read_text(encoding="utf-8")
+    xml = renderizar_home_xml(template, parametros_sh3d(projeto, lote, "modelo/modelo.obj"))
+    raiz = ElementTree.fromstring(xml)
+    assert raiz.find("compass") is not None
+    assert raiz.find("light").get("model") == "luz/luz.obj"
+    assert len(raiz.find("room").findall("point")) == 4
+
+
+def test_extras_padrao_entram_no_zip(tmp_path, projeto, lote):
+    template = (TEMPLATES_DIR / "Home.xml").read_text(encoding="utf-8")
+    xml = renderizar_home_xml(template, parametros_sh3d(projeto, lote, "modelo/modelo.obj"))
+    saida = empacotar(xml, tmp_path / "x.sh3d", extras=EXTRAS_PADRAO)
+    with zipfile.ZipFile(saida) as z:
+        assert "luz/luz.obj" in z.namelist()

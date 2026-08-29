@@ -75,3 +75,23 @@ def converter_arquivo(origem: Path, destino: Path, y_para_cima: bool = True) -> 
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_text(escrever_obj(malha, destino.stem, y_para_cima), encoding="utf-8")
     return malha
+
+
+@dataclass(frozen=True)
+class Caixa:
+    """Bounding box de uma malha OBJ nas unidades do arquivo (aqui, cm, Y para cima)."""
+
+    largura: float  # extensão em X
+    altura: float  # extensão em Y
+    profundidade: float  # extensão em Z
+
+
+def bbox_obj(texto_obj: str) -> Caixa:
+    xs, ys, zs = [], [], []
+    for linha in texto_obj.splitlines():
+        if linha.startswith("v "):
+            x, y, z = (float(v) for v in linha.split()[1:4])
+            xs.append(x), ys.append(y), zs.append(z)
+    if not xs:
+        raise MeshError("OBJ sem vértices")
+    return Caixa(max(xs) - min(xs), max(ys) - min(ys), max(zs) - min(zs))

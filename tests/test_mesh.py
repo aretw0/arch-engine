@@ -1,6 +1,6 @@
 import pytest
 
-from arch_engine.mesh import MeshError, converter_arquivo, ler_off, off_para_obj
+from arch_engine.mesh import MeshError, bbox_obj, converter_arquivo, ler_off, off_para_obj
 
 CUBO_OFF = """OFF
 # cubo unitário, no formato que o OpenSCAD escreve
@@ -63,3 +63,10 @@ def test_converter_arquivo_escreve_destino(tmp_path):
     malha = converter_arquivo(origem, destino)
     assert destino.exists() and "o casa" in destino.read_text()
     assert len(malha.faces) == 6
+
+
+def test_bbox_do_obj_mede_as_tres_extensoes():
+    caixa = bbox_obj("o x\nv 0 0 0\nv 900 450 -1200\nv 10 10 -10\n")
+    assert (caixa.largura, caixa.altura, caixa.profundidade) == (900, 450, 1200)
+    with pytest.raises(MeshError, match="sem vértices"):
+        bbox_obj("o vazio\n")
