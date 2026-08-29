@@ -1,0 +1,20 @@
+# Lote candidato A — o "container" da edificação. Metros, graus, %.
+# Trocar de lote não muda a casa: muda só onde e se ela cabe (regra lote.cabe).
+schema: arch-engine.lote.v1
+id: lote_a
+nome: Lote A — rua sem saída, face norte
+largura: 15.0
+profundidade: 30.0
+recuos: # exigências típicas de código de obras municipal — confira o seu
+  frente: 5.0
+  fundo: 3.0
+  lateral: 1.5
+orientacao_norte_graus: 0 # norte apontando para a frente do lote
+declividade_percentual: 3
+solo:
+  classe_presumida: argilo-arenoso
+  nivel_agua_presumido_m: 4.5
+  ensaios: # metodologia em engenharia/solo_tests.md
+    spt: pendente
+    frasco: pendente
+    infiltracao: pendente

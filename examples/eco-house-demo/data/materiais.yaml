@@ -1,0 +1,113 @@
+# DB de insumos com metadados de saúde e ecologia.
+#
+# Convenções
+# - preco_unitario: na `moeda` do projeto, por `unidade`. Valores ILUSTRATIVOS
+#   (2026, interior do Brasil) — substitua por cotações reais.
+# - consumo_por_m2: quanto da `unidade` cada m² da base geométrica consome.
+# - saude.vif: classe de emissão de compostos orgânicos voláteis (COV/VOC),
+#   Isento | Baixo | Médio | Alto — inspirada nas classes A+/A/B/C do rótulo
+#   francês "Émissions dans l'air intérieur" (ISO 16000-9 / EN 16516).
+# - ecologico.pegada_carbono_kg_co2: kg CO₂e por `unidade`, derivado do ICE v2.0
+#   (kg CO₂e/kg × densidade). A derivação vai em `notas`; a fonte em `provenance`.
+# - provenance: espelho de provenance:v1 (refarm). `channel` é obrigatório.
+schema: arch-engine.materiais.v1
+
+materiais:
+  taipa_de_pilao:
+    nome: Taipa de pilão (terra crua compactada)
+    unidade: m3
+    preco_unitario: 350.0
+    consumo_por_m2: 0.30 # parede de 30 cm
+    saude: { vif: Isento, respirabilidade: Alta }
+    ecologico: { pegada_carbono_kg_co2: 45.6, origem_local: true }
+    notas: "ICE v2.0 'Soil — General (Rammed Soil)': 0,024 kgCO₂e/kg × 1 900 kg/m³."
+    provenance:
+      channel: literature
+      originLink: https://kps.fsv.cvut.cz/upload/files/icev2.0summarytables.pdf
+      collectedAt: "2026-08-29"
+      license: "ICE v2.0 (Univ. of Bath) — consulta"
+
+  reboco_de_cal:
+    nome: Reboco de cal hidratada
+    unidade: kg
+    preco_unitario: 1.80
+    consumo_por_m2: 20.0 # ~1,5 cm de espessura
+    saude: { vif: Isento, respirabilidade: Alta }
+    ecologico: { pegada_carbono_kg_co2: 0.78, origem_local: true }
+    notas: "ICE v2.0 'Lime — General': 0,78 kgCO₂e/kg. Não desconta recarbonatação."
+    provenance:
+      channel: literature
+      originLink: https://kps.fsv.cvut.cz/upload/files/icev2.0summarytables.pdf
+      collectedAt: "2026-08-29"
+
+  tinta_mineral_silicato:
+    nome: Tinta mineral de silicato
+    unidade: L
+    preco_unitario: 45.0
+    consumo_por_m2: 0.25 # duas demãos
+    saude: { vif: Baixo, respirabilidade: Alta }
+    ecologico: { pegada_carbono_kg_co2: 3.56, origem_local: false }
+    notas: "ICE v2.0 'Paint — Waterborne': 2,54 kgCO₂e/kg × 1,4 kg/L."
+    provenance:
+      channel: literature
+      originLink: https://kps.fsv.cvut.cz/upload/files/icev2.0summarytables.pdf
+      collectedAt: "2026-08-29"
+
+  esmalte_sintetico:
+    nome: Esmalte sintético (base solvente)
+    unidade: L
+    preco_unitario: 55.0
+    consumo_por_m2: 0.20
+    saude: { vif: Alto, respirabilidade: Baixa }
+    ecologico: { pegada_carbono_kg_co2: 3.76, origem_local: false }
+    notas: >-
+      Cadastrado para demonstrar o bloqueio do validador: troque a tinta da
+      composição por este insumo e o build falha (regra material.vif.bloqueado).
+      ICE v2.0 'Paint — Solventborne': 3,76 kgCO₂e/kg × ~1,0 kg/L.
+    provenance:
+      channel: literature
+      originLink: https://kps.fsv.cvut.cz/upload/files/icev2.0summarytables.pdf
+      collectedAt: "2026-08-29"
+
+  madeira_serrada_eucalipto:
+    nome: Madeira serrada de reflorestamento (eucalipto)
+    unidade: m3
+    preco_unitario: 1800.0
+    consumo_por_m2: 0.035 # tesouras, terças e caibros por m² de cobertura
+    saude: { vif: Isento, respirabilidade: Alta }
+    ecologico: { pegada_carbono_kg_co2: 110.0, origem_local: true }
+    notas: >-
+      ICE v2.0 'Timber — Sawn Softwood': 0,20 kgCO₂e/kg fóssil (+0,39 biogênico,
+      excluído por convenção do ICE) × 550 kg/m³.
+    provenance:
+      channel: literature
+      originLink: https://kps.fsv.cvut.cz/upload/files/icev2.0summarytables.pdf
+      collectedAt: "2026-08-29"
+
+  telha_ceramica:
+    nome: Telha cerâmica
+    unidade: un
+    preco_unitario: 2.50
+    consumo_por_m2: 16.0
+    saude: { vif: Isento, respirabilidade: Alta }
+    ecologico: { pegada_carbono_kg_co2: 0.62, origem_local: true }
+    notas: "ICE v2.0 'Clay — General': 0,24 kgCO₂e/kg × 2,6 kg/telha."
+    provenance:
+      channel: literature
+      originLink: https://kps.fsv.cvut.cz/upload/files/icev2.0summarytables.pdf
+      collectedAt: "2026-08-29"
+
+  radier_concreto:
+    nome: Radier de concreto RC 25/30
+    unidade: m3
+    preco_unitario: 650.0
+    consumo_por_m2: 0.10 # laje de 10 cm
+    saude: { vif: Isento, respirabilidade: Baixa }
+    ecologico: { pegada_carbono_kg_co2: 336.0, origem_local: true }
+    notas: >-
+      ICE v2.0 'Concrete RC 25/30': 0,140 kgCO₂e/kg × 2 400 kg/m³. É o item de
+      maior carbono da demo — o relatório existe para deixar isso visível.
+    provenance:
+      channel: literature
+      originLink: https://kps.fsv.cvut.cz/upload/files/icev2.0summarytables.pdf
+      collectedAt: "2026-08-29"

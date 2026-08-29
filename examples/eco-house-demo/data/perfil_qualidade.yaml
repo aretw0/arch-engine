@@ -1,0 +1,34 @@
+# Linter de restrições da demo — um QualityProfile (quality:v1, refarm).
+# severity: fail bloqueia o build (exit 1) · warn avisa · notice informa.
+# check.type é resolvido pelo core (core/arch_engine/validator.py → CHECKS).
+name: eco-house-demo
+rules:
+  - id: material.vif.bloqueado
+    severity: fail
+    category: saude
+    description: Nenhum insumo da composição pode ter emissão de COV "Alto".
+    check: { type: material-field-forbidden, campo: saude.vif, valores: [Alto] }
+
+  - id: orcamento.limite
+    severity: fail
+    category: custo
+    description: O custo total de insumos não pode passar de orcamento_limite.
+    check: { type: budget-limit }
+
+  - id: lote.cabe
+    severity: fail
+    category: implantacao
+    description: A edificação mais os recuos obrigatórios precisa caber no lote.
+    check: { type: lot-fit }
+
+  - id: material.origem_local
+    severity: warn
+    category: ecologia
+    description: Prefira insumos de origem local (menos transporte, mais economia regional).
+    check: { type: material-field-expected, campo: ecologico.origem_local, valor: true }
+
+  - id: material.provenance
+    severity: warn
+    category: rastreabilidade
+    description: Todo insumo deve dizer de onde vêm seus números (provenance.channel).
+    check: { type: provenance-required }

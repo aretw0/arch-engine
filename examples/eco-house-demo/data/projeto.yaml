@@ -1,0 +1,39 @@
+# Parâmetros dimensionais da edificação. Metros e graus.
+# Esta é a ÚNICA fonte das dimensões: o CAD (cad/gen/params.scad) e o
+# Sweet Home 3D (cad/sh3d/Home.xml) são derivados daqui pelo `arch-engine`.
+schema: arch-engine.projeto.v1
+nome: Casa Ecológica Demo
+moeda: BRL
+orcamento_limite: 60000 # só insumos, sem mão de obra — valor ilustrativo
+
+dimensoes:
+  largura: 9.0
+  profundidade: 12.0
+  pe_direito: 3.0
+  espessura_parede: 0.30 # taipa de pilão pede parede espessa
+  aberturas_percentual: 0.15 # portas e janelas descontadas da área de parede
+  inclinacao_cobertura_graus: 20
+
+# Composição: cada linha cruza uma base geométrica com um insumo do DB.
+# base ∈ area_piso | perimetro | area_paredes_externas | area_cobertura | volume_interno
+composicao:
+  - elemento: paredes externas
+    material: taipa_de_pilao
+    base: area_paredes_externas
+  - elemento: reboco de cal (duas faces)
+    material: reboco_de_cal
+    base: area_paredes_externas
+    fator: 2.0
+  - elemento: pintura (duas faces)
+    material: tinta_mineral_silicato
+    base: area_paredes_externas
+    fator: 2.0
+  - elemento: estrutura da cobertura
+    material: madeira_serrada_eucalipto
+    base: area_cobertura
+  - elemento: telhas
+    material: telha_ceramica
+    base: area_cobertura
+  - elemento: radier (fundação)
+    material: radier_concreto
+    base: area_piso
