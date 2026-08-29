@@ -1,0 +1,41 @@
+[project]
+name = "arch-engine"
+version = "0.1.0"
+description = "Declarative Physical-Design Stack: Docs as Code para projeto, engenharia e planejamento físico."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.12"
+dependencies = [
+  "pyyaml>=6.0",
+]
+
+[project.scripts]
+arch-engine = "arch_engine.cli:main"
+
+[dependency-groups]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.6",
+  "yamllint>=1.35",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# O pacote importável chama-se `arch_engine`, mas mora em `core/` para deixar
+# visível no filesystem a fronteira framework (core/) × dados (examples/).
+[tool.hatch.build.targets.wheel]
+packages = ["core/arch_engine"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["core"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["core", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "N"]

@@ -1,0 +1,23 @@
+# <tipo>(<escopo>): <descrição curta>
+# |<---- Usar no máximo 50 caracteres ---->|
+
+# Descrição mais detalhada, se necessário:
+# |<---- Tente limitar cada linha em 72 caracteres ---->|
+#
+# * Liste as mudanças principais
+# * Uma por linha
+# * Comece com um marcador
+
+# --- TIPOS DE COMMIT ---
+# feat     ✨ (novo recurso)
+# fix      🐛 (correção de bug)
+# docs     📚 (documentação)
+# style    💎 (formatação)
+# refactor ♻️  (refatoração)
+# test     🧪 (testes)
+# chore    🔧 (manutenção)
+# ci       👷 (pipeline)
+
+# --- DICAS ---
+# - Use o imperativo: "adiciona" não "adicionado"
+# - Sem trailers de coautoria: o histórico é do projeto

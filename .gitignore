@@ -1,0 +1,32 @@
+# --- Artefatos de build (fonte é texto; artefato é derivado) -----------------
+artifacts/
+**/cad/render/
+**/cad/gen/
+*.obj
+*.stl
+*.off
+*.3mf
+*.amf
+*.sh3d
+*.pdf
+# PNGs só entram se forem fonte (ex.: docs/). Renders ficam em cad/render/.
+
+# --- Python ------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# --- Node (prova de consumo dos contratos do refarm) --------------------------
+node_modules/
+vendor/*.tgz
+package-lock.json
+
+# --- Editores e SO ------------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
