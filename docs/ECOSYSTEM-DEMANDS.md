@@ -28,7 +28,7 @@ JSON, são contratos de verdade, não tipos TypeScript.
 
 | Prioridade | Dono | Bloco esperado | Prova que o arch-engine fornece |
 |---|---|---|---|
-| P0 | refarm | release npm de `quality-contract-v1`, `artifact-contract-v1` e `provenance-contract-v1` (sem deps, `consumer-proven`) | `scripts/test_refarm_contracts.mjs` passa; o job `refarm-proof` deixa de ser manual e vira `npm ci` |
+| P0 | refarm | release npm de `quality-contract-v1`, `artifact-contract-v1` e `provenance-contract-v1` — agora a unidade `evidence-contracts-ready` (refarm `e8ac2f86`), fechada em dependências, com install smoke 3/3 e first-publish idempotente; falta só a promoção `develop → main` e o dispatch da lane pelo dono do repo | `scripts/test_refarm_contracts.mjs` passa; o job `refarm-proof` deixa de ser manual e vira `npm ci` |
 | P0 | refarm | JSON Schema publicado ao lado de cada `types.ts` (ou gerado deles) | `contracts.py` encolhe para `jsonschema.validate`; fim do espelho manual |
 | P1 | refarm | `vendor_refarm` como comando do refarm (`refarm handoff vendor`) | é a terceira cópia do script (coop-vault, enem, arch-engine) |
 | P2 | refarm | `ds` + `local-surface` para uma landing page estática que renderize `relatorio.md` e `manifest.json` | página do exemplo publicada em GitHub Pages sem CSS próprio |
@@ -38,6 +38,9 @@ JSON, são contratos de verdade, não tipos TypeScript.
 
 - ~~`provenance-contract-v1` não está no packet de handoff~~ — resolvido em `0efcfd4c`.
 - ~~Falta um `validateQualityReport(report)` puro~~ — resolvido em `aaa3b6cc`.
+- ~~`TASK_ARTIFACT_MANIFEST_SCHEMA` declarado duas vezes no refarm (`refarm.` × `sovereign.`)~~ —
+  ISS-112 fechada em `46e76097`: o valor do pacote (`sovereign.task-artifacts.v1`, o que este
+  consumidor já emitia) é o canônico.
 - `TaskArtifactReference.role` é um enum fechado (`dataset|report|…|other`):
   artefatos CAD caem todos em `other` e se distinguem só por `labels`.
 
