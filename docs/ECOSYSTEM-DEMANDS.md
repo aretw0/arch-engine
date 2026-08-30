@@ -5,7 +5,7 @@ aqui. Segue o formato do `enem/docs/ECOSYSTEM-DEMANDS.md`.
 
 ## Baseline consumido
 
-- Packet de handoff `refarm/.refarm/handoff/vault-seed/2026-08-30` (25 pacotes):
+- Packet de handoff `refarm/.refarm/handoff/vault-seed/2026-08-30` (27 pacotes, refarm `50539198`):
   `@refarm.dev/quality-contract-v1@0.1.0`, `@refarm.dev/artifact-contract-v1@0.1.0`,
   `@refarm.dev/provenance-contract-v1@0.1.0`, vendorizados por `scripts/vendor_refarm.mjs`.
 - Formas espelhadas em Python: `core/arch_engine/contracts.py` (ADR-004).
