@@ -41,6 +41,12 @@ def test_build_gera_todos_os_artefatos_e_passa(tmp_path, capsys):
     assert quant["lote"] == "lote_teste" and len(quant["itens"]) == 2
     qualidade = json.loads((raiz / "artifacts" / "quality-report.json").read_text())
     assert qualidade["capability"] == "quality:v1" and qualidade["counts"] == {"warn": 2}
+    insumos = json.loads((raiz / "artifacts" / "insumos.json").read_text())
+    assert insumos["materiais"]["taipa"]["provenance"] == {
+        "channel": "literature",
+        "originLink": "https://example.org/ice",
+    }
+    assert insumos["materiais"]["tinta_mineral"]["provenance"] is None
     assert "edificacao_largura = 900;" in (raiz / "cad" / "gen" / "params.scad").read_text()
     manifest = json.loads((raiz / "artifacts" / "manifest.json").read_text())
     assert manifest["schema"] == "sovereign.task-artifacts.v1"
@@ -48,10 +54,13 @@ def test_build_gera_todos_os_artefatos_e_passa(tmp_path, capsys):
     assert {
         "artifacts/relatorio.md",
         "artifacts/quality-report.json",
+        "artifacts/insumos.json",
         "cad/gen/params.scad",
     } <= uris
     assert all(len(a["hash"]["value"]) == 64 for a in manifest["artifacts"])
     assert len(manifest["artifacts"][0]["provenance"]["inputHashes"]) == 4
+    insumos_ref = next(a for a in manifest["artifacts"] if a["uri"] == "artifacts/insumos.json")
+    assert insumos_ref["role"] == "dataset"
     assert "✓" in capsys.readouterr().out
 
 

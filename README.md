@@ -97,6 +97,7 @@ tests/                pytest: unidade em memória + ponta a ponta sobre a demo
 |---|---|---|---|
 | **Compilar** | `data/projeto.yaml` + `data/materiais.yaml` + lote | `artifacts/relatorio.md`, `quantitativos.json` | `arch-engine build` |
 | **Validar** | `data/perfil_qualidade.yaml` (regras declaradas) | `artifacts/quality-report.json` (`quality:v1`) | idem; `fail` → exit 1 |
+| **Publicar os insumos** | `data/materiais.yaml` | `artifacts/insumos.json` (com `provenance:v1` por insumo) | idem |
 | **Parametrizar o CAD** | as mesmas dimensões, em cm | `cad/gen/params.scad` | idem |
 | **Modelar** | `cad/main.scad` (terreno em `%`, casa sólida) | `cad/render/modelo.{off,stl,png}` | OpenSCAD |
 | **Converter** | OFF | OBJ (Y-up) | `arch-engine off2obj` |

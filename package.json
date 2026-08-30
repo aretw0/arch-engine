@@ -9,7 +9,10 @@
   },
   "dependencies": {
     "@refarm.dev/artifact-contract-v1": "file:vendor/refarm.dev-artifact-contract-v1-0.1.0.tgz",
+    "@refarm.dev/provenance-contract-v1": "file:vendor/refarm.dev-provenance-contract-v1-0.1.0.tgz",
     "@refarm.dev/quality-contract-v1": "file:vendor/refarm.dev-quality-contract-v1-0.1.0.tgz"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  }
 }

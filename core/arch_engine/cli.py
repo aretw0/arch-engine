@@ -12,6 +12,7 @@ import os
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from arch_engine import __version__
 from arch_engine.compiler import Compilacao, compilar
@@ -24,6 +25,7 @@ from arch_engine.contracts import (
 )
 from arch_engine.loader import SpecError
 from arch_engine.mesh import MeshError, bbox_obj, converter_arquivo
+from arch_engine.model import Material
 from arch_engine.report import gerar_markdown
 from arch_engine.scad import gerar_params_scad
 from arch_engine.sh3d import EXTRAS_PADRAO, empacotar, parametros_sh3d, renderizar_home_xml
@@ -37,6 +39,7 @@ ARTEFATOS_CONHECIDOS = [
     ("artifacts/relatorio.md", "text/markdown", "report", ["orcamento", "sustentabilidade"]),
     ("artifacts/quantitativos.json", "application/json", "dataset", ["orcamento"]),
     ("artifacts/quality-report.json", "application/json", "audit-trail", ["quality:v1"]),
+    ("artifacts/insumos.json", "application/json", "dataset", ["insumos", "provenance:v1"]),
     ("cad/gen/params.scad", "text/x-openscad", "other", ["cad", "gerado"]),
     ("cad/render/modelo.off", "model/off", "other", ["cad", "openscad"]),
     ("cad/render/modelo.obj", "model/obj", "other", ["cad", "sweethome3d"]),
@@ -86,6 +89,47 @@ def _quantitativos_json(c: Compilacao) -> str:
             ],
             "custo_total": round(c.custo_total, 2),
             "carbono_total_kg": round(c.carbono_total_kg, 3),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def _insumos_json(materiais: dict[str, Material]) -> str:
+    """O DB de insumos como JSON, com a `provenance` de cada um no formato provenance:v1.
+
+    É um artefato `dataset`: quem consome (a prova Node, uma landing page) lê
+    isto, não o YAML — e a provenance vai junto, porque é ela que torna cada
+    número defensável.
+    """
+
+    def provenance(m: Material) -> dict[str, Any] | None:
+        if m.provenance is None:
+            return None
+        campos = {
+            "channel": m.provenance.channel,
+            "originLink": m.provenance.origin_link,
+            "collectedAt": m.provenance.collected_at,
+            "license": m.provenance.license,
+            **m.provenance.extra,
+        }
+        return {k: v for k, v in campos.items() if v is not None}
+
+    return json.dumps(
+        {
+            "schema": "arch-engine.insumos.v1",
+            "materiais": {
+                m.id: {
+                    "nome": m.nome,
+                    "unidade": m.unidade,
+                    "preco_unitario": m.preco_unitario,
+                    "consumo_por_m2": m.consumo_por_m2,
+                    "saude": m.saude,
+                    "ecologico": m.ecologico,
+                    "provenance": provenance(m),
+                }
+                for m in materiais.values()
+            },
         },
         ensure_ascii=False,
         indent=2,
@@ -176,6 +220,7 @@ def cmd_build(args: argparse.Namespace) -> int:
         json.dumps(qualidade, ensure_ascii=False, indent=2) + "\n",
     )
     _escrever(instancia.params_scad, gerar_params_scad(fontes.projeto, fontes.lote))
+    _escrever(instancia.artifacts_dir / "insumos.json", _insumos_json(fontes.materiais) + "\n")
     manifest = escrever_manifest(instancia, ["build", args.instancia])
     print(f"✓ {instancia.artifacts_dir / 'relatorio.md'}")
     print(f"✓ {instancia.params_scad}")

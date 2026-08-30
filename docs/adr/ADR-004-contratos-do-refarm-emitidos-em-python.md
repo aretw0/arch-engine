@@ -17,7 +17,7 @@ Candidatos avaliados (ver `refarm/packages/README.md`):
 |---|---|---|
 | `quality-contract-v1` | o validador é um `QualityChecker`; o perfil YAML é um `QualityProfile`; a saída é um `QualityReport` | sim |
 | `artifact-contract-v1` | `manifest.json` (`sovereign.task-artifacts.v1`) com hash e provenance de cada artefato | sim |
-| `provenance-contract-v1` | `provenance` de cada insumo (`channel` obrigatório) | **não** (candidato) |
+| `provenance-contract-v1` | `provenance` de cada insumo (`channel` obrigatório) | sim, desde o packet 2026-08-30 — entrou na lane puxado por este consumidor |
 | `process-handoff` | forma `{command,args,display}` da provenance de processo | sim (só a forma) |
 | `budget-contract-v1` | orçamento de *dispatch* (tokens/USD/prazo), não de obra | não se aplica |
 | `ds`, `local-surface` | landing page (baixa prioridade) | sim, depois |
@@ -28,9 +28,11 @@ Candidatos avaliados (ver `refarm/packages/README.md`):
    um validador reduzido de `artifact:v1` para falhar cedo.
 2. O `build` escreve `quality-report.json` e `manifest.json` nessas formas.
 3. `scripts/test_refarm_contracts.mjs` valida os arquivos com o **código
-   real** dos tarballs (`validateTaskArtifactManifest`, `countFindings`,
-   `QUALITY_CAPABILITY`). Node é opcional e só existe para a prova; o core
-   não depende dele.
+   real** dos tarballs (`validateTaskArtifactManifest`, `validateQualityReport`,
+   `readProvenance` + `verifyProvenance` sobre `artifacts/insumos.json`). Node
+   é opcional e só existe para a prova; o core não depende dele.
+   `validateQualityReport` não existia: foi escrito no refarm por causa desta
+   prova (`aaa3b6cc`).
 4. `scripts/vendor_refarm.mjs` copia os tarballs do packet local (mecanismo do
    `coop-vault`), conferindo sha256. Sem lockfile: os bytes mudam entre packets.
 5. As demandas ao refarm ficam em `docs/ECOSYSTEM-DEMANDS.md`, no formato do

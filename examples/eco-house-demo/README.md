@@ -20,6 +20,7 @@ Saídas (ignoradas pelo Git):
 | `artifacts/relatorio.md` | quantitativos, custo, CO₂e/m², saúde dos insumos, achados do linter |
 | `artifacts/quantitativos.json` | os mesmos números, para máquinas |
 | `artifacts/quality-report.json` | relatório `quality:v1` (refarm) do perfil `eco-house-demo` |
+| `artifacts/insumos.json` | o DB de insumos como dataset, com a `provenance:v1` de cada número |
 | `artifacts/manifest.json` | manifesto `artifact:v1` com sha256 e provenance de cada artefato |
 | `cad/gen/params.scad` | dimensões em cm para o OpenSCAD — **gerado, não edite** |
 | `cad/render/modelo.{off,stl,png}` | a casa exportada pelo OpenSCAD (o terreno fica fora, está no `%`) |

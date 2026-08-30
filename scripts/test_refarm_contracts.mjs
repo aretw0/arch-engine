@@ -19,7 +19,8 @@ import {
   selectTaskArtifacts,
   validateTaskArtifactManifest,
 } from "@refarm.dev/artifact-contract-v1";
-import { QUALITY_CAPABILITY, countFindings } from "@refarm.dev/quality-contract-v1";
+import { readProvenance, verifyProvenance } from "@refarm.dev/provenance-contract-v1";
+import { QUALITY_CAPABILITY, countFindings, validateQualityReport } from "@refarm.dev/quality-contract-v1";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const INSTANCIA = process.argv[2] ?? "examples/eco-house-demo";
@@ -39,6 +40,10 @@ assert.ok(manifest.artifacts.every((a) => a.provenance.inputHashes.length >= 3),
 
 // --- quality:v1 --------------------------------------------------------------
 const qualidade = ler("artifacts/quality-report.json");
+// validateQualityReport nasceu desta prova (refarm aaa3b6cc): antes só havia a
+// conformance de *checker*, inútil para um relatório que já existe em disco.
+const veredito = validateQualityReport(qualidade);
+assert.deepEqual(veredito.issues, [], `quality-report inválido: ${JSON.stringify(veredito.issues)}`);
 assert.equal(qualidade.capability, QUALITY_CAPABILITY);
 assert.ok(qualidade.checkerId && qualidade.domain && qualidade.profileName);
 assert.deepEqual(qualidade.counts, countFindings(qualidade.findings), "counts = countFindings(findings)");
@@ -48,7 +53,23 @@ for (const f of qualidade.findings) {
   assert.equal(typeof f.message, "string");
 }
 
+// --- provenance:v1 -----------------------------------------------------------
+// Cada insumo diz de onde vêm seus números; o contrato diz se isso está bem dito.
+const insumos = ler("artifacts/insumos.json");
+const materiais = Object.entries(insumos.materiais);
+let comProvenance = 0;
+for (const [id, material] of materiais) {
+  const prov = readProvenance({ provenance: material.provenance ?? undefined });
+  if (prov === null) continue;
+  const resultado = verifyProvenance(prov);
+  assert.equal(resultado.valid, true, `${id}: provenance inválida: ${resultado.failures.join(", ")}`);
+  assert.equal(resultado.checks["not-empty-origin"]?.ok, true, `${id}: provenance sem originLink`);
+  comProvenance += 1;
+}
+assert.ok(comProvenance > 0, "a demo precisa de ao menos um insumo com provenance");
+
 console.log(
   `refarm contracts: ok — ${manifest.artifacts.length} artefatos (artifact:v1), ` +
-    `${qualidade.findings.length} achados (quality:v1) em ${INSTANCIA}`,
+    `${qualidade.findings.length} achados (quality:v1), ` +
+    `${comProvenance}/${materiais.length} insumos com provenance:v1 válida em ${INSTANCIA}`,
 );
