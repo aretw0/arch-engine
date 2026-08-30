@@ -3,6 +3,8 @@ artifacts/
 **/cad/render/
 **/cad/gen/
 *.obj
+# Templates-fonte (ex.: o corpo da luz do SH3D) não são artefatos:
+!core/templates/**/*.obj
 *.stl
 *.off
 *.3mf
